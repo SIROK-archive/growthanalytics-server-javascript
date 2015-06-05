@@ -12,7 +12,7 @@ module GrowthAnalyticsModule {
         private opened:boolean = false;
 
         private template = Template.compile('<iframe id="growthanalyticsSegmentView" '
-            + 'src="{baseUrl}externalCreateSegments/?applicationId={applicationId}" '
+            + 'src="{apiUrl}xdm/authorize?credentialId={credentialId}&redirectUrl={redirectUrl}" '
             + 'allowtransparency="true" style="width: 898px; min-height: 529px; border-style: none; position: fixed; top: 0px; padding: 0px; margin: 0px; z-index: 100000;"></iframe>'
                 + '<div style="width: 100%; height: {height}px;"></div>');
 
@@ -23,8 +23,9 @@ module GrowthAnalyticsModule {
 
             this.element = document.createElement('div');
             this.element.innerHTML = this.template({
-                baseUrl: GrowthAnalytics.options.baseUrl,
-                applicationId:   encodeURIComponent(GrowthAnalytics.options.applicationId),
+                apiUrl: GrowthAnalytics.options.apiUrl,
+                credentialId: GrowthAnalytics.options.credentialId,
+                redirectUrl:     encodeURIComponent(GrowthAnalytics.options.baseUrl + "externalCreateSegments/?applicationId=" + GrowthAnalytics.options.applicationId),
                 height:          encodeURIComponent(GrowthAnalytics.options.headerHeight.toString()),
                 backgroundColor: encodeURIComponent(GrowthAnalytics.options.backgroundColor)
             });

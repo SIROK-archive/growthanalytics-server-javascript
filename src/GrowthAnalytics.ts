@@ -9,7 +9,9 @@ class GrowthAnalytics {
 
     public static options:GrowthAnalyticsModule.Options = {
         applicationId: undefined,
+        credentialId: undefined,
         baseUrl: 'https://analytics.growthbeat.com/',
+        apiUrl: 'https://api.analytics.growthbeat.com/',
         headerHeight: 68,
         rootElementId: 'growthbeat',
         sessionIdCookieName: 'growthbeat.sessionId',
@@ -23,10 +25,12 @@ class GrowthAnalytics {
         for (var key in options)
             this.options[key] = options[key];
 
-        this.growthbeatElement = document.createElement('div');
-        this.growthbeatElement.id = this.options.rootElementId;
-        document.body.insertBefore(this.growthbeatElement, document.body.childNodes[0]);
-
+        this.growthbeatElement = document.getElementById(this.options.rootElementId);
+        if (this.growthbeatElement == null) {
+            this.growthbeatElement = document.createElement('div');
+            this.growthbeatElement.id = this.options.rootElementId;
+            document.body.insertBefore(this.growthbeatElement, document.body.childNodes[0]);
+        }
     }
 
     public static showSegment():void {
