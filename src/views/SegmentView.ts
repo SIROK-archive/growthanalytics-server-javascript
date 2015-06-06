@@ -12,7 +12,7 @@ module GrowthAnalyticsModule {
         private opened:boolean = false;
 
         private template = Template.compile('<iframe id="growthanalyticsSegmentView" '
-            + 'src="{baseUrl}externalCreateSegments/?applicationId={applicationId}" '
+            + 'src="{baseUrl}segments/external/?applicationId={applicationId}" '
             + 'allowtransparency="true" style="width: 898px; min-height: 529px; border-style: none; position: fixed; top: 0px; padding: 0px; margin: 0px; z-index: 100000;"></iframe>'
                 + '<div style="width: 100%; height: {height}px;"></div>');
 
