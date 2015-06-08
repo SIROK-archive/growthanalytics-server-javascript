@@ -13,7 +13,7 @@ gulp.task('typescript', function () {
             module: 'amd',
             comment: true,
             keepTree: false,
-            out: 'analytics.segment.js'
+            out: 'growthanalytics.js'
         }))
         .pipe(gulp.dest('target/'))
         .pipe($.notify({message: 'Typescript compile done.'}));
@@ -21,7 +21,7 @@ gulp.task('typescript', function () {
 
 gulp.task('uglify', function () {
 	var path = 'target/';
-    gulp.src(path + 'analytics.segment.js').pipe($.uglifyjs('analytics.segment.min.js')).pipe(gulp.dest(path));
+    gulp.src(path + 'growthanalytics.js').pipe($.uglifyjs('growthanalytics.min.js')).pipe(gulp.dest(path));
 });
 
 gulp.task('default', function() {
