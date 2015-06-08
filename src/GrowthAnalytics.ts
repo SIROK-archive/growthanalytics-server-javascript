@@ -10,6 +10,7 @@ class GrowthAnalytics {
     public static options:GrowthAnalyticsModule.Options = {
         applicationId: undefined,
         credentialId: undefined,
+        callerUrl: location.hostname,
         baseUrl: 'https://analytics.growthbeat.com/',
         apiUrl: 'https://api.analytics.growthbeat.com/',
         headerHeight: 68,
@@ -33,10 +34,10 @@ class GrowthAnalytics {
         }
     }
 
-    public static showSegment():void {
+    public static showSegment(onComplete:()=>void) {
         if (GrowthAnalyticsModule.CookieUtils.get(this.options.sessionIdCookieName)) {
 
-            new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement);
+            new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete);
 
         } else {
 

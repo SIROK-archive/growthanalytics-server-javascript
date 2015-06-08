@@ -19,13 +19,13 @@ module GrowthAnalyticsModule {
         constructor() {
         }
 
-        public show(rootElement:HTMLElement):void {
+        public show(rootElement:HTMLElement, onComplete:()=>void):void {
 
             this.element = document.createElement('div');
             this.element.innerHTML = this.template({
                 apiUrl: GrowthAnalytics.options.apiUrl,
                 credentialId: GrowthAnalytics.options.credentialId,
-                redirectUrl:     encodeURIComponent(GrowthAnalytics.options.baseUrl + "externalCreateSegments/?applicationId=" + GrowthAnalytics.options.applicationId),
+                redirectUrl:     encodeURIComponent(GrowthAnalytics.options.baseUrl + "segments/external?applicationId=" + GrowthAnalytics.options.applicationId + "&targetOrigin=" + encodeURIComponent(GrowthAnalytics.options.callerUrl)),
                 height:          encodeURIComponent(GrowthAnalytics.options.headerHeight.toString()),
                 backgroundColor: encodeURIComponent(GrowthAnalytics.options.backgroundColor)
             });
@@ -46,6 +46,7 @@ module GrowthAnalyticsModule {
                         break;
                     case 'close':
                         this.opened = false;
+                        onComplete();
                         break;
                 }
                 this.rerender();
@@ -62,7 +63,6 @@ module GrowthAnalyticsModule {
         private rerender():void {
             this.iframeElement.style.height = (this.opened ? window.innerHeight : GrowthAnalytics.options.headerHeight) + 'px';
         }
-
     }
 
 }
