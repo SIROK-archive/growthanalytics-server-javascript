@@ -35,59 +35,7 @@ class GrowthAnalytics {
     }
 
     public static showSegment(onComplete:()=>void) {
-        if (GrowthAnalyticsModule.CookieUtils.get(this.options.sessionIdCookieName)) {
-
-            new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete);
-
-        } else {
-
-            this.getAccount((account:GrowthAnalyticsModule.Account)=> {
-
-                if (account == null || account.id == null) {
-                    this.redirectToLogin();
-                    return;
-                }
-
-                this.createSession((session:GrowthAnalyticsModule.Session)=> {
-
-                    if (!session || !session.id) {
-                        this.redirectToConnect();
-                        return;
-                    }
-
-                    GrowthAnalyticsModule.CookieUtils.set(this.options.sessionIdCookieName, session.id, this.options.cookieDuration);
-                    location.reload();
-
-                });
-
-            });
-
-        }
-
-    }
-
-    public static getAccount(callback:(account:GrowthAnalyticsModule.Account)=>void):void {
-
-        GrowthAnalyticsModule.Xdm.request('GET', this.options.baseUrl + 'xdm/accounts', {
-            applicationId: this.options.applicationId,
-            url: location.href
-        }, (body:string)=> {
-            var account:GrowthAnalyticsModule.Account = JSON.parse(body);
-            callback(account);
-        }, this.growthbeatElement);
-
-    }
-
-    public static createSession(callback:(session:GrowthAnalyticsModule.Session)=>void):void {
-
-        GrowthAnalyticsModule.Xdm.request('POST', this.options.baseUrl + 'xdm/sessions', {
-            applicationId: this.options.applicationId,
-            url: location.href
-        }, (body:string)=> {
-            var session:GrowthAnalyticsModule.Session = JSON.parse(body);
-            callback(session);
-        }, this.growthbeatElement);
-
+      new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete);
     }
 
     private static redirectToLogin():void {

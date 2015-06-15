@@ -12,7 +12,7 @@ module GrowthAnalyticsModule {
         private opened:boolean = false;
 
         private template = Template.compile('<iframe id="growthanalyticsSegmentView" '
-            + 'src="{apiUrl}xdm/authorize?credentialId={credentialId}&redirectUrl={redirectUrl}" '
+            + 'src="{baseUrl}segments/external?credentialId={credentialId}&applicationId={applicationId}&targetOrigin={origin}" '
             + 'allowtransparency="true" style="width: 898px; min-height: 529px; border-style: none; position: fixed; top: 0px; padding: 0px; margin: 0px; z-index: 100000;"></iframe>'
                 + '<div style="width: 100%; height: {height}px;"></div>');
 
@@ -23,10 +23,11 @@ module GrowthAnalyticsModule {
 
             this.element = document.createElement('div');
             this.element.innerHTML = this.template({
-                apiUrl: GrowthAnalytics.options.apiUrl,
+                baseUrl: GrowthAnalytics.options.baseUrl,
                 credentialId: GrowthAnalytics.options.credentialId,
-                redirectUrl:     encodeURIComponent(GrowthAnalytics.options.baseUrl + "segments/external?applicationId=" + GrowthAnalytics.options.applicationId + "&targetOrigin=" + encodeURIComponent(GrowthAnalytics.options.callerUrl)),
-                height:          encodeURIComponent(GrowthAnalytics.options.headerHeight.toString()),
+                applicationId: GrowthAnalytics.options.applicationId,
+                origin: encodeURIComponent(GrowthAnalytics.options.callerUrl),
+                height: encodeURIComponent(GrowthAnalytics.options.headerHeight.toString()),
                 backgroundColor: encodeURIComponent(GrowthAnalytics.options.backgroundColor)
             });
 

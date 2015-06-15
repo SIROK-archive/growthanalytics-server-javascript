@@ -73,16 +73,18 @@ var GrowthAnalyticsModule;
         function SegmentView() {
             this.opened = false;
             this.template = GrowthAnalyticsModule.Template.compile('<iframe id="growthanalyticsSegmentView" '
-                + 'src="{baseUrl}segments/external/?applicationId={applicationId}" '
+                + 'src="{baseUrl}segments/external?credentialId={credentialId}&applicationId={applicationId}&targetOrigin={origin}" '
                 + 'allowtransparency="true" style="width: 898px; min-height: 529px; border-style: none; position: fixed; top: 0px; padding: 0px; margin: 0px; z-index: 100000;"></iframe>'
                 + '<div style="width: 100%; height: {height}px;"></div>');
         }
-        SegmentView.prototype.show = function (rootElement) {
+        SegmentView.prototype.show = function (rootElement, onComplete) {
             var _this = this;
             this.element = document.createElement('div');
             this.element.innerHTML = this.template({
                 baseUrl: GrowthAnalytics.options.baseUrl,
-                applicationId: encodeURIComponent(GrowthAnalytics.options.applicationId),
+                credentialId: GrowthAnalytics.options.credentialId,
+                applicationId: GrowthAnalytics.options.applicationId,
+                origin: encodeURIComponent(GrowthAnalytics.options.callerUrl),
                 height: encodeURIComponent(GrowthAnalytics.options.headerHeight.toString()),
                 backgroundColor: encodeURIComponent(GrowthAnalytics.options.backgroundColor)
             });
@@ -101,6 +103,7 @@ var GrowthAnalyticsModule;
                         break;
                     case 'close':
                         _this.opened = false;
+                        onComplete();
                         break;
                 }
                 _this.rerender();
@@ -172,49 +175,15 @@ var GrowthAnalytics = (function () {
     GrowthAnalytics.init = function (options) {
         for (var key in options)
             this.options[key] = options[key];
-        this.growthbeatElement = document.createElement('div');
-        this.growthbeatElement.id = this.options.rootElementId;
-        document.body.insertBefore(this.growthbeatElement, document.body.childNodes[0]);
-    };
-    GrowthAnalytics.showSegment = function () {
-        var _this = this;
-        if (GrowthAnalyticsModule.CookieUtils.get(this.options.sessionIdCookieName)) {
-            new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement);
-        }
-        else {
-            this.getAccount(function (account) {
-                if (account == null || account.id == null) {
-                    _this.redirectToLogin();
-                    return;
-                }
-                _this.createSession(function (session) {
-                    if (!session || !session.id) {
-                        _this.redirectToConnect();
-                        return;
-                    }
-                    GrowthAnalyticsModule.CookieUtils.set(_this.options.sessionIdCookieName, session.id, _this.options.cookieDuration);
-                    location.reload();
-                });
-            });
+        this.growthbeatElement = document.getElementById(this.options.rootElementId);
+        if (this.growthbeatElement == null) {
+            this.growthbeatElement = document.createElement('div');
+            this.growthbeatElement.id = this.options.rootElementId;
+            document.body.insertBefore(this.growthbeatElement, document.body.childNodes[0]);
         }
     };
-    GrowthAnalytics.getAccount = function (callback) {
-        GrowthAnalyticsModule.Xdm.request('GET', this.options.baseUrl + 'xdm/accounts', {
-            applicationId: this.options.applicationId,
-            url: location.href
-        }, function (body) {
-            var account = JSON.parse(body);
-            callback(account);
-        }, this.growthbeatElement);
-    };
-    GrowthAnalytics.createSession = function (callback) {
-        GrowthAnalyticsModule.Xdm.request('POST', this.options.baseUrl + 'xdm/sessions', {
-            applicationId: this.options.applicationId,
-            url: location.href
-        }, function (body) {
-            var session = JSON.parse(body);
-            callback(session);
-        }, this.growthbeatElement);
+    GrowthAnalytics.showSegment = function (onComplete) {
+        new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete);
     };
     GrowthAnalytics.redirectToLogin = function () {
         location.href = this.options.baseUrl + 'login?applicationId=' + this.options.applicationId;
@@ -224,7 +193,10 @@ var GrowthAnalytics = (function () {
     };
     GrowthAnalytics.options = {
         applicationId: undefined,
+        credentialId: undefined,
+        callerUrl: location.hostname,
         baseUrl: 'https://analytics.growthbeat.com/',
+        apiUrl: 'https://api.analytics.growthbeat.com/',
         headerHeight: 68,
         rootElementId: 'growthbeat',
         sessionIdCookieName: 'growthbeat.sessionId',
