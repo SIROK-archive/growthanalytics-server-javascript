@@ -12,19 +12,20 @@ module GrowthAnalyticsModule {
         private opened:boolean = false;
 
         private template = Template.compile('<iframe id="growthanalyticsSegmentView" '
-            + 'src="{baseUrl}segments/external/?applicationId={applicationId}" '
+            + 'src="{apiUrl}xdm/authorize?credentialId={credentialId}&redirectUrl={redirectUrl}" '
             + 'allowtransparency="true" style="width: 898px; min-height: 529px; border-style: none; position: fixed; top: 0px; padding: 0px; margin: 0px; z-index: 100000;"></iframe>'
                 + '<div style="width: 100%; height: {height}px;"></div>');
 
         constructor() {
         }
 
-        public show(rootElement:HTMLElement):void {
+        public show(rootElement:HTMLElement, onComplete:()=>void):void {
 
             this.element = document.createElement('div');
             this.element.innerHTML = this.template({
-                baseUrl: GrowthAnalytics.options.baseUrl,
-                applicationId:   encodeURIComponent(GrowthAnalytics.options.applicationId),
+                apiUrl: GrowthAnalytics.options.apiUrl,
+                credentialId: GrowthAnalytics.options.credentialId,
+                redirectUrl:     encodeURIComponent(GrowthAnalytics.options.baseUrl + "segments/external?applicationId=" + GrowthAnalytics.options.applicationId + "&targetOrigin=" + encodeURIComponent(GrowthAnalytics.options.callerUrl)),
                 height:          encodeURIComponent(GrowthAnalytics.options.headerHeight.toString()),
                 backgroundColor: encodeURIComponent(GrowthAnalytics.options.backgroundColor)
             });
@@ -45,6 +46,7 @@ module GrowthAnalyticsModule {
                         break;
                     case 'close':
                         this.opened = false;
+                        onComplete();
                         break;
                 }
                 this.rerender();
@@ -61,7 +63,6 @@ module GrowthAnalyticsModule {
         private rerender():void {
             this.iframeElement.style.height = (this.opened ? window.innerHeight : GrowthAnalytics.options.headerHeight) + 'px';
         }
-
     }
 
 }
