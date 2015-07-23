@@ -194,7 +194,7 @@ var GrowthAnalytics = (function () {
     GrowthAnalytics.options = {
         applicationId: undefined,
         credentialId: undefined,
-        callerUrl: location.hostname,
+        callerUrl: location.protocol + '//' + location.host + '/',
         baseUrl: 'https://analytics.growthbeat.com/',
         apiUrl: 'https://api.analytics.growthbeat.com/',
         headerHeight: 68,
