@@ -34,8 +34,8 @@ class GrowthAnalytics {
         }
     }
 
-    public static showSegment(onComplete:()=>void) {
-      new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete);
+    public static showSegment(onComplete:()=>void, segmentId?:string) {
+      new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete, segmentId);
     }
 
     private static redirectToLogin():void {
