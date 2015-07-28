@@ -72,16 +72,18 @@ var GrowthAnalyticsModule;
     var SegmentView = (function () {
         function SegmentView() {
             this.opened = false;
-            this.template = GrowthAnalyticsModule.Template.compile('<iframe id="growthanalyticsSegmentView" '
-                + 'src="{baseUrl}segments/external?credentialId={credentialId}&applicationId={applicationId}&targetOrigin={origin}" '
-                + 'allowtransparency="true" style="width: 898px; min-height: 529px; border-style: none; position: fixed; top: 0px; padding: 0px; margin: 0px; z-index: 100000;"></iframe>'
-                + '<div style="width: 100%; height: {height}px;"></div>');
+            this.template = GrowthAnalyticsModule.Template.compile('<iframe id="growthanalyticsSegmentView" ' + 'src="{baseUrl}segments/external{segmentId}?credentialId={credentialId}&applicationId={applicationId}&targetOrigin={origin}" ' + 'allowtransparency="true" style="width: 898px; min-height: 529px; border-style: none; position: fixed; top: 0px; padding: 0px; margin: 0px; z-index: 100000;"></iframe>' + '<div style="width: 100%; height: {height}px;"></div>');
         }
-        SegmentView.prototype.show = function (rootElement, onComplete) {
+        SegmentView.prototype.show = function (rootElement, onComplete, segmentId) {
             var _this = this;
+            if (segmentId == null)
+                segmentId = '';
+            else
+                segmentId = '/' + segmentId;
             this.element = document.createElement('div');
             this.element.innerHTML = this.template({
                 baseUrl: GrowthAnalytics.options.baseUrl,
+                segmentId: segmentId,
                 credentialId: GrowthAnalytics.options.credentialId,
                 applicationId: GrowthAnalytics.options.applicationId,
                 origin: encodeURIComponent(GrowthAnalytics.options.callerUrl),
@@ -156,9 +158,7 @@ var GrowthAnalyticsModule;
             workingElement.appendChild(element);
             formElement.submit();
         };
-        Xdm.template = GrowthAnalyticsModule.Template.compile('<form method="{method}" action="{url}" '
-            + 'target="{target}"></form><iframe id="growthAnalyticsXdmView" name="{target}" '
-            + 'style="position: absolute; top: -10000px; height: 0px; width: 0px;"></iframe>');
+        Xdm.template = GrowthAnalyticsModule.Template.compile('<form method="{method}" action="{url}" ' + 'target="{target}"></form><iframe id="growthAnalyticsXdmView" name="{target}" ' + 'style="position: absolute; top: -10000px; height: 0px; width: 0px;"></iframe>');
         return Xdm;
     })();
     GrowthAnalyticsModule.Xdm = Xdm;
@@ -182,8 +182,8 @@ var GrowthAnalytics = (function () {
             document.body.insertBefore(this.growthbeatElement, document.body.childNodes[0]);
         }
     };
-    GrowthAnalytics.showSegment = function (onComplete) {
-        new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete);
+    GrowthAnalytics.showSegment = function (onComplete, segmentId) {
+        new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete, segmentId);
     };
     GrowthAnalytics.redirectToLogin = function () {
         location.href = this.options.baseUrl + 'login?applicationId=' + this.options.applicationId;
@@ -194,7 +194,7 @@ var GrowthAnalytics = (function () {
     GrowthAnalytics.options = {
         applicationId: undefined,
         credentialId: undefined,
-        callerUrl: location.hostname,
+        callerUrl: location.protocol + '//' + location.host + '/',
         baseUrl: 'https://analytics.growthbeat.com/',
         apiUrl: 'https://api.analytics.growthbeat.com/',
         headerHeight: 68,

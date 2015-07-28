@@ -12,18 +12,24 @@ module GrowthAnalyticsModule {
         private opened:boolean = false;
 
         private template = Template.compile('<iframe id="growthanalyticsSegmentView" '
-            + 'src="{baseUrl}segments/external?credentialId={credentialId}&applicationId={applicationId}&targetOrigin={origin}" '
+            + 'src="{baseUrl}segments/external{segmentId}?credentialId={credentialId}&applicationId={applicationId}&targetOrigin={origin}" '
             + 'allowtransparency="true" style="width: 898px; min-height: 529px; border-style: none; position: fixed; top: 0px; padding: 0px; margin: 0px; z-index: 100000;"></iframe>'
                 + '<div style="width: 100%; height: {height}px;"></div>');
 
         constructor() {
         }
 
-        public show(rootElement:HTMLElement, onComplete:()=>void):void {
+        public show(rootElement:HTMLElement, onComplete:()=>void, segmentId?:string):void {
+
+            if (segmentId == null)
+                segmentId = '';
+            else
+                segmentId = '/' + segmentId;
 
             this.element = document.createElement('div');
             this.element.innerHTML = this.template({
                 baseUrl: GrowthAnalytics.options.baseUrl,
+                segmentId: segmentId,
                 credentialId: GrowthAnalytics.options.credentialId,
                 applicationId: GrowthAnalytics.options.applicationId,
                 origin: encodeURIComponent(GrowthAnalytics.options.callerUrl),

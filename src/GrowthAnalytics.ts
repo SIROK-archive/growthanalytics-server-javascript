@@ -10,7 +10,7 @@ class GrowthAnalytics {
     public static options:GrowthAnalyticsModule.Options = {
         applicationId: undefined,
         credentialId: undefined,
-        callerUrl: location.hostname,
+        callerUrl: location.protocol + '//' + location.host + '/',
         baseUrl: 'https://analytics.growthbeat.com/',
         apiUrl: 'https://api.analytics.growthbeat.com/',
         headerHeight: 68,
@@ -34,8 +34,8 @@ class GrowthAnalytics {
         }
     }
 
-    public static showSegment(onComplete:()=>void) {
-      new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete);
+    public static showSegment(onComplete:()=>void, segmentId?:string) {
+      new GrowthAnalyticsModule.SegmentView().show(this.growthbeatElement, onComplete, segmentId);
     }
 
     private static redirectToLogin():void {
